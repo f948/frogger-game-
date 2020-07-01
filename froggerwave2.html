@@ -1,0 +1,284 @@
+<html>
+	<head>
+		
+		<style>
+			canvas{
+				   border  : 1px solid black;
+				  }
+		</style>
+		
+		<canvas id="canvas" width="500" height="400" ></canvas>
+	
+		
+	</head>
+	<body>
+	
+		<script>
+			
+			// global variables 
+			var player = null;
+			var pad = null; 
+			var pads = new Array();
+			var lane,y;
+			var num;
+			var direction;
+			var i;
+			var safe=false,movewithPad=false;
+			
+			// global constants 
+			const canvas = document.getElementById("canvas");
+			const context = canvas.getContext('2d');
+		
+			// class that creates objects on screen
+			
+			class Circle{
+			
+				constructor(centerX,centerY){
+					this._centerX=centerX;
+					this._centerY=centerY;
+				
+	
+				
+				}
+				
+				set centerX(newCenterX){
+					this._centerX=newCenterX;
+				
+				}
+				
+				get centerX(){
+					return this._centerX;
+				
+				}
+				
+				set centerY(newCenterY){
+					this._centerY=newCenterY;
+				
+				}
+				
+				get centerY(){
+					return this._centerY;
+				
+				}
+				
+				
+			
+			}
+			
+			// listen for arrow keys being pressed 
+			document.addEventListener("keydown",function(event){
+				
+				
+				// move left 
+				if(event.keyCode == 37){
+					
+					if(0<player.centerX){
+						
+						direction="left";
+						
+						
+					}
+				}
+				
+				// move right
+				else if(event.keyCode == 39){
+					
+					if(player.centerX<500){
+						
+						direction="right";
+						
+					
+
+					}
+					
+				}
+				
+				// move up
+				else if(event.keyCode == 38){
+					
+					if(0<player.centerY){
+						
+						direction="up";
+						
+					}
+				}
+					
+				// move down
+				else if(event.keyCode == 40){
+					
+					if(player.centerY<400){
+						
+						direction="down";
+						
+						
+					}
+					
+				}
+				
+			
+				
+			});
+			
+			
+			function init(){
+				
+				
+				// create player object
+				player = new Circle(250,375);
+				
+				// create a new pad every 0.3 seconds
+				setInterval(createPad,300);
+				
+				// update screen every second 
+				setInterval(updateScreen,1000);
+				
+			}
+			
+			function createPad(){
+				
+				// choose lane 
+				lane = Math.floor((Math.random()*6)+1);
+				
+				if(lane == 1){
+					y = 75;
+				}
+				else if(lane == 2){
+					y = 125;
+				}
+				else if(lane == 3){
+					y = 175;
+				}
+				else if(lane == 4){
+					y = 225;
+				}
+				else if(lane == 5){
+					y = 275;
+				}
+				else if(lane == 6){
+					y = 325;
+				}
+				
+				// create pad on left of screen 
+				pad = new Circle(-50,y);
+				pads.push(pad);
+			}
+			
+			function updateScreen(){
+				
+				// clear canvas every time screen loads 
+				context.clearRect(0,0,canvas.width,canvas.height);
+				
+				// draw sidewalk 
+				context.fillStyle="grey";
+				context.fillRect(0,0,500,50);
+				context.fillRect(0,350,500,50);
+				
+				
+				// draw water 
+				context.fillStyle="blue";
+				context.fillRect(0,50,500,300);
+				
+				// draw pads 
+				
+				context.fillStyle="green";
+				
+				for(i=0;i<=pads.length-1;i++){
+					
+					// delete pads if they move off the screen
+					if(pads[i].centerX > 525){
+						delete pads[i].centerX;
+						delete pads[i].centerY;
+					
+					}
+					
+					// draw each pad 
+					context.beginPath();
+					context.arc(pads[i].centerX,pads[i].centerY,25,0,2*Math.PI);
+					context.fill();
+					
+					// update position of pad 
+					pads[i].centerX+=25;
+					
+					
+				}
+				
+				if(direction == "left"){
+					player.centerX-=50;
+		
+				}
+				else if(direction == "right"){
+					player.centerX+=50;
+				
+				}
+				else if(direction == "up"){
+					player.centerY-=50;
+		
+				}
+				else if(direction == "down"){
+					player.centerY+=50;
+				
+				}
+				
+				direction="";
+				
+				// check if player landed on a pad 
+				for(i=0;i<=pads.length-1;i++){
+						
+					// player landed on a pad 
+					if(((pads[i].centerX-player.centerX)**2) + ((pads[i].centerY-player.centerY)**2) <= 625){
+						safe=true;
+						moveWithPad=true;
+					}
+					
+					
+				}
+						
+				// check if player is still at starting point
+				if(player.centerY == 375){
+					safe=true;
+					moveWithPad=false;
+				}
+				
+				// win condition
+				if(player.centerY == 25){
+					window.open("froggerwave3.html");
+				
+				}
+				
+				// if player landed in the water 
+				if(!safe){
+					location.reload();
+						
+				}
+				
+				// reset safe variable to default value 
+				safe=false;
+				
+				// move player with pad 
+				if(moveWithPad){
+					
+					if(player.centerX<=500){
+						player.centerX+=25;
+					}
+					
+					else if(player.centerX>500){
+						location.reload();
+					}
+				}
+				
+				
+				// draw player
+				context.fillStyle="red";
+				context.beginPath();
+				context.arc(player.centerX,player.centerY,15,0,2*Math.PI);
+				context.fill();
+				
+			}
+			
+			
+			// start game when window loads 
+			window.onload=init;
+			
+		</script>
+	</body>
+</html>
