@@ -1,6 +1,6 @@
 # frogger game-
 
-Description-A frogger-like game in which the player must cross the river by jumping on lily pads without falling into the water. If the player falls into the water the game will restart. As long as the center pixel of the player is still a pixel within a lily pad  the player is considered safe.
+Description-A frogger-like game in which the player must cross the river by jumping on lily pads without falling into the water. If the player falls into the water the game will restart. As long as the center pixel of the player is still a pixel within a lily pad  the player is considered safe.Completing one wave will result in the next wave starting.
 
 # Required
 
